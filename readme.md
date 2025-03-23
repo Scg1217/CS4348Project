@@ -8,7 +8,7 @@ This project implements a multi-process encryption system using the Vigenère ci
 
 ## Requirements
 
-- **Python 3.6.5 or higher**  
+- **Python 2.7.5 or higher**  
   The project has been tested on Python 2.7.5. It will run on MobaXterm’s cs1 server which has Python version 2.7.5.
 - **MobaXterm or a similar terminal environment** (if working on a remote server).
 
