@@ -58,13 +58,13 @@ def main():
     # Process each command received from standard input.
     while True:
         line = sys.stdin.readline()
-	if not line:
-            break
-        # Split the line into the command and its argument.
+        if not line:
+                break
+            # Split the line into the command and its argument.
         line = line.rstrip("\n")
-	if not line:
-	    continue
-	parts = line.split(None, 1)
+        if not line:
+            continue
+        parts = line.split(None, 1)
         command = parts[0].upper()
         argument = parts[1] if len(parts) > 1 else ""
         
