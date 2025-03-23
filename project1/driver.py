@@ -3,9 +3,14 @@ import subprocess
 import sys
 
 def is_valid_string(s):
+    # Checks if the string contains only letters.
     return s.isalpha()
 
 def log_message(logger_proc, action, message):
+    """
+    Sends a log message to the logger process.
+    The action is the type of log (e.g., CMD, RESULT, ERROR) and the message contains details.
+    """
     try:
         logger_proc.stdin.write(f"{action.upper()} {message}\n")
         logger_proc.stdin.flush()
@@ -34,6 +39,7 @@ def choose_from_history(history, prompt):
         print("Invalid selection. Please try again.")
 
 def main():
+    # Ensure the log file name is provided as a command-line argument.
     if len(sys.argv) != 2:
         print("Usage: python driver.py <logfile>")
         sys.exit(1)
@@ -108,12 +114,16 @@ Commands:
                 log_message(logger_proc, "ERROR", f"Encryption program communication error: {e}")
                 
         elif cmd == "encrypt":
+            # Log the encrypt command invocation.
             log_message(logger_proc, "CMD", "encrypt command invoked")
+
+            # Ask the user whether to use a string from history or enter a new plaintext.
             use_history = input("Use a string from history? (y/n): ").strip().lower()
             selected = None
             if use_history == 'y':
                 selected = choose_from_history(history, "Select a number from history (or 0 to enter new): ")
             if selected is None:
+                # Prompt for a new plaintext string.
                 plaintext = input("Enter string to encrypt (letters only): ").strip()
                 if not is_valid_string(plaintext):
                     print("Error: Input must contain only letters.")
@@ -123,12 +133,15 @@ Commands:
                 history.append(plaintext)
             else:
                 plaintext = selected.upper()
+
+            # Send the ENCRYPT command to the encryption process.
             try:
                 enc_proc.stdin.write(f"ENCRYPT {plaintext}\n")
                 enc_proc.stdin.flush()
                 response = enc_proc.stdout.readline().strip()
                 print(response)
                 log_message(logger_proc, "RESULT", f"Encrypt command response: {response}")
+                # If encryption succeeded, add the result to the history.
                 if response.startswith("RESULT"):
                     parts = response.split(maxsplit=1)
                     if len(parts) == 2:
@@ -139,12 +152,16 @@ Commands:
                 log_message(logger_proc, "ERROR", f"Encryption program communication error: {e}")
                 
         elif cmd == "decrypt":
+            # Log the decrypt command invocation.
             log_message(logger_proc, "CMD", "decrypt command invoked")
+
+            # Ask the user whether to use a string from history or enter a new ciphertext.
             use_history = input("Use a string from history? (y/n): ").strip().lower()
             selected = None
             if use_history == 'y':
                 selected = choose_from_history(history, "Select a number from history (or 0 to enter new): ")
             if selected is None:
+                # Prompt for a new ciphertext string.
                 ciphertext = input("Enter string to decrypt (letters only): ").strip()
                 if not is_valid_string(ciphertext):
                     print("Error: Input must contain only letters.")
@@ -154,12 +171,15 @@ Commands:
                 history.append(ciphertext)
             else:
                 ciphertext = selected.upper()
+
+            # Send the DECRYPT command to the encryption process.
             try:
                 enc_proc.stdin.write(f"DECRYPT {ciphertext}\n")
                 enc_proc.stdin.flush()
                 response = enc_proc.stdout.readline().strip()
                 print(response)
                 log_message(logger_proc, "RESULT", f"Decrypt command response: {response}")
+                # If decryption succeeded, add the result to the history.
                 if response.startswith("RESULT"):
                     parts = response.split(maxsplit=1)
                     if len(parts) == 2:
@@ -170,6 +190,7 @@ Commands:
                 log_message(logger_proc, "ERROR", f"Encryption program communication error: {e}")
                 
         elif cmd == "history":
+            # Log that the history command was invoked.
             log_message(logger_proc, "CMD", "history command invoked")
             if history:
                 print("History:")
@@ -180,6 +201,7 @@ Commands:
             log_message(logger_proc, "RESULT", "Displayed history")
             
         elif cmd == "quit":
+            # Log the quit command.
             log_message(logger_proc, "CMD", "quit command invoked")
             # Send QUIT to encryption and logger programs.
             try:
@@ -196,6 +218,7 @@ Commands:
             log_message(logger_proc, "EXIT", "Driver program exiting")
             break
         else:
+            # Handle invalid commands.
             print("Invalid command. Please try again.")
             log_message(logger_proc, "ERROR", f"Invalid command entered: {cmd}")
             

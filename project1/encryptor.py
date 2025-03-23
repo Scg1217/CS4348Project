@@ -2,26 +2,31 @@
 import sys
 
 def vigenere_encrypt(plaintext, key):
-    # Assumes plaintext and key are uppercase and contain only letters.
-    ciphertext = []
+    ciphertext = [] # List to accumulate encrypted characters.
     key_length = len(key)
+
+    # Process each character in the plaintext.
     for i, char in enumerate(plaintext):
         if char.isalpha():
+            # Convert character and corresponding key character to a 0-25 range.
             p = ord(char) - ord('A')
             k = ord(key[i % key_length]) - ord('A')
+            # Compute the encrypted character using modulo 26 arithmetic.
             c = (p + k) % 26
             ciphertext.append(chr(c + ord('A')))
         else:
-            ciphertext.append(char)  # Although input is assumed valid.
+            ciphertext.append(char)  # If non-letter 
     return "".join(ciphertext)
 
 def vigenere_decrypt(ciphertext, key):
-    plaintext = []
+    plaintext = [] # List to accumulate decrypted characters.
     key_length = len(key)
+    # Process each character in the ciphertext.
     for i, char in enumerate(ciphertext):
         if char.isalpha():
             c = ord(char) - ord('A')
             k = ord(key[i % key_length]) - ord('A')
+            # Compute the decrypted character using modulo arithmetic.
             p = (c - k + 26) % 26
             plaintext.append(chr(p + ord('A')))
         else:
@@ -29,11 +34,14 @@ def vigenere_decrypt(ciphertext, key):
     return "".join(plaintext)
 
 def main():
-    current_key = None
+    current_key = None # Initialize the encryption key as None.
+
+    # Continuously read commands from standard input.
     for line in sys.stdin:
         line = line.rstrip("\n")
         if not line:
-            continue
+            continue # Skip empty lines.
+
         # Split the line into command and argument.
         parts = line.split(maxsplit=1)
         command = parts[0].upper()
@@ -51,10 +59,12 @@ def main():
                 print("RESULT")
                 sys.stdout.flush()
         elif command == "ENCRYPT":
+            # Check if the encryption key is set.
             if current_key is None:
                 print("ERROR Password not set")
                 sys.stdout.flush()
             else:
+                # Validate that the argument contains only letters.
                 if not argument.isalpha():
                     print("ERROR Input must contain only letters")
                     sys.stdout.flush()
@@ -77,6 +87,7 @@ def main():
                     print(f"RESULT {decrypted_text}")
                     sys.stdout.flush()
         else:
+            # Handle unknown commands.
             print("ERROR Unknown command")
             sys.stdout.flush()
 
