@@ -1,51 +1,43 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import sys
-from datetime import datetime
+import datetime
+import codecs
 
 def main():
-    # Ensure the log file name is provided as a command-line argument.
-    if len(sys.argv) != 2:
-        print("Usage: python logger.py <logfile>")
+    if len(sys.argv) < 2:
+        print("Usage: python logger.py <log_filename>")
         sys.exit(1)
+
     log_filename = sys.argv[1]
-    
-    # Attempt to open the log file in append mode.
-    try:
-        log_file = open(log_filename, "a")
-    except Exception as e:
-        print(f"Error opening log file: {e}")
-        sys.exit(1)
-    
-    try:
-        # Read from standard input line by line.
-        for line in sys.stdin:
 
-            # Remove the trailing newline character.
-            line = line.rstrip("\n")
-
-            # If the line is "QUIT", break out of the loop and exit.
-            if line.strip() == "QUIT":
+    # Open the log file in append mode
+    with codecs.open(log_filename, 'a', 'utf8') as log_file:
+        while True:
+            line = sys.stdin.readline()
+            if not line:
+                # If stdin is closed or pipe is broken, exit
                 break
-            # Skip processing if the line is empty.
-            if not line.strip():
-                continue
-            # Split the line into two parts: the action and the message.
-            parts = line.split(maxsplit=1)
-            action = parts[0]
-            message = parts[1] if len(parts) > 1 else ""
 
-             # Create a timestamp in the format "YYYY-MM-DD HH:MM".
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+            line = line.strip()
+            if line == "QUIT":
+                # When we see "QUIT", we stop logging and exit
+                break
 
-            # Format the log entry.
-            log_line = f"{timestamp} [{action}] {message}\n"
-            log_file.write(log_line)
+            # Split the first token (ACTION) from the rest (MESSAGE)
+            parts = line.split(None, 1)
+            if len(parts) == 1:
+                action, message = parts[0], ""
+            else:
+                action, message = parts[0], parts[1]
+
+            # Make a timestamp string in "YYYY-MM-DD HH:MM" format
+            now = datetime.datetime.now()
+            time_str = now.strftime("%Y-%m-%d %H:%M")
+
+            # Write out the log entry: 2025-03-02 11:32 [START] Logging Started.
+            log_entry = "{} [{}] {}\n".format(time_str, action, message)
+            log_file.write(log_entry)
             log_file.flush()
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        # Always close the log file.
-        log_file.close()
 
 if __name__ == "__main__":
     main()
