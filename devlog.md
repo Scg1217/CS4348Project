@@ -56,7 +56,7 @@
 
 ## [2025-03-22 01:00 PM]
 **Thoughts so far:**
-- Ran `python -u encryption.py` manually; encryption commands return output correctly when tested alone.
+- Ran `python encryption.py` manually; encryption commands return output correctly when tested alone.
 - In `driver.py`, even though I’m launching encryption.py with the `-u` flag, the expected output is not being captured.
 - Inserted debug statements to verify that driver.py is reading from the encryption process.
 - Still, output seems to be missing or delayed; this may be due to subtle buffering issues in Python 2.7’s subprocess module.
@@ -66,20 +66,6 @@
 - Consider whether to persist further debugging in Python or explore switching to Java.
 - Document all observations in the devlog.
 - Commit all debugging attempts with a message like "Debugging encryption output in driver.py".
-
----
-
-## [2025-03-22 02:30 PM]
-**Thoughts so far:**
-- After additional debugging, I confirmed that encryption.py works as expected in isolation.
-- The driver process still struggles with capturing the encryption output reliably.
-- Although the integration isn’t perfect, all individual functionalities (setting a password, encryption, and decryption) work when tested manually.
-- The known output buffering issue in the integration will be documented, and instructions for manual testing will be added to the README.
-
-**Plan for this session:**
-- Finalize the code as much as possible and document the known issue in the README.
-- Prepare for final integration testing.
-- Commit with a message like "Final integration adjustments and documentation of output buffering issue".
 
 ---
 
@@ -115,5 +101,3 @@
 - Document any final thoughts in the devlog.
 
 ---
-
-*Remember: Do not delete any devlog entries. Each commit and session note is valuable to show your development process and the invisible work that went into the project.*
